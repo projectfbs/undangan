@@ -1,1 +1,1735 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Chat Invitation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .app-wrapper {
+      background: #F0F2F5;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .whatsapp-header {
+      background: #008069;
+      color: #FFFFFF;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    
+    .header-icon-btn {
+      background: none;
+      border: none;
+      color: #AEBAC1;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+      border-radius: 50%;
+    }
+    
+    .header-icon-btn:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .chat-container {
+      flex: 1;
+      background: #EFEAE2;
+      padding: 16px;
+      overflow-y: auto;
+      background-image: 
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0,0,0,0.015) 2px,
+          rgba(0,0,0,0.015) 4px
+        );
+    }
+    
+    .message {
+      display: flex;
+      margin-bottom: 8px;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .message.sent {
+      justify-content: flex-end;
+    }
+    
+    .message.received {
+      justify-content: flex-start;
+    }
+    
+    .message-bubble {
+      max-width: 75%;
+      padding: 6px 7px 8px 9px;
+      border-radius: 7.5px;
+      position: relative;
+      word-wrap: break-word;
+      box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+    }
+    
+    .message.sent .message-bubble {
+      background: #D9FDD3;
+      border-bottom-right-radius: 0;
+      color: #111B21;
+    }
+    
+    .message.received .message-bubble {
+      background: #FFFFFF;
+      border-bottom-left-radius: 0;
+      color: #111B21;
+    }
+    
+    .message-time {
+      font-size: 11px;
+      color: rgba(0,0,0,0.45);
+      text-align: right;
+      margin-top: 4px;
+    }
+    
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #8696A0;
+      animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-10px);
+      }
+    }
+    
+    .chat-input-container {
+      background: #F0F2F5;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .chat-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 21px;
+      background: #FFFFFF;
+      color: #3B3B3B;
+      font-size: 15px;
+      outline: none;
+    }
+    
+    .chat-input::placeholder {
+      color: #8696A0;
+    }
+    
+    .input-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+      border-radius: 50%;
+    }
+    
+    .input-icon-btn:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .send-btn {
+      background: #00A884;
+      color: white;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .send-btn:hover {
+      background: #06CF9C;
+    }
+    
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .special-card {
+      background: #FFFFFF;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 8px 0;
+      border: 1px solid #E9EDEF;
+    }
+    
+    .countdown-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    
+    .countdown-box {
+      background: #008069;
+      color: white;
+      padding: 12px 8px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .countdown-number {
+      font-size: 24px;
+      font-weight: 700;
+      display: block;
+    }
+    
+    .countdown-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+    
+    .location-card {
+      background: #F0F2F5;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    
+    .btn-whatsapp {
+      background: #00A884;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 24px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 8px;
+    }
+    
+    .btn-whatsapp:hover {
+      background: #06CF9C;
+    }
+    
+    .btn-whatsapp:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .btn-map {
+      background: #008069;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-map:hover {
+      background: #00A884;
+    }
+    
+    .rsvp-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    
+    .rsvp-btn {
+      background: #F0F2F5;
+      border: 2px solid #00A884;
+      color: #00A884;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      text-align: left;
+    }
+    
+    .rsvp-btn:hover {
+      background: #008069;
+      color: white;
+    }
+    
+    .rsvp-btn.selected {
+      background: #00A884;
+      color: white;
+    }
+    
+    .input-group {
+      margin: 12px 0;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      color: #667781;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #D1D7DB;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #FFFFFF;
+      color: #111B21;
+      transition: all 0.3s ease;
+    }
+    
+    .input-group input:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: #00A884;
+    }
+    
+    .wish-bubble {
+      background: #FFFFFF;
+      border-left: 3px solid #00A884;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .wish-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    
+    .wish-name {
+      font-weight: 600;
+      color: #00A884;
+      font-size: 14px;
+    }
+    
+    .wish-badge {
+      font-size: 16px;
+    }
+    
+    .wish-text {
+      color: #111B21;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    .wish-date {
+      font-size: 11px;
+      color: #8696A0;
+      margin-top: 4px;
+    }
+    
 
+    .status-bar {
+      background: #008069;
+      padding: 4px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #FFFFFF;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: #FFFFFF;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      animation: modalSlide 0.3s ease;
+    }
+    
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .video-modal {
+      max-width: 90%;
+      width: 800px;
+    }
+    
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      background: #000;
+      border-radius: 8px;
+    }
+    
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #202C33;
+      color: #E9EDEF;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 1000;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: #8696A0;
+    }
+    
+    .bank-info {
+      background: #F0F2F5;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #D1D7DB;
+    }
+    
+    .copy-btn {
+      background: #00A884;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    
+    .copy-btn:hover {
+      background: #06CF9C;
+    }
+    
+    .theme-menu {
+      position: absolute;
+      top: 60px;
+      right: 16px;
+      background: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 50;
+      min-width: 200px;
+      display: none;
+    }
+    
+    .theme-menu.active {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .theme-option {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.2s;
+      font-size: 14px;
+      color: #111B21;
+    }
+    
+    .theme-option:hover {
+      background: #F0F2F5;
+    }
+    
+    .theme-preview {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #D1D7DB;
+    }
+    
+    .url-info-box {
+      background: #E8F5E9;
+      border: 1px solid #81C784;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    
+    .url-info-box h4 {
+      font-weight: 600;
+      color: #2E7D32;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .url-info-box p {
+      font-size: 13px;
+      color: #2E7D32;
+      margin: 4px 0;
+    }
+    
+    .url-info-box strong {
+      color: #1B5E20;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div class="app-wrapper w-full h-full"><!-- Status Bar -->
+   <div class="status-bar"><span>⚡ Wedding Invitation</span> <span id="current-time">12:00</span>
+   </div><!-- WhatsApp Header -->
+   <div class="whatsapp-header"><button class="header-icon-btn" onclick="showInfo()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none"><path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+     </svg></button>
+    <div class="avatar" id="header-avatar" onclick="showProfileModal()" style="cursor: pointer;">
+     💑
+    </div>
+    <div style="flex: 1; cursor: pointer;" onclick="showProfileModal()">
+     <div style="font-weight: 500; font-size: 16px;" id="header-name">
+      Nana &amp; Bowo
+     </div>
+     <div style="font-size: 13px; opacity: 0.8;" id="header-subtitle">
+      Wedding Invitation
+     </div>
+    </div><button class="header-icon-btn" onclick="showVideoCall()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none"><path d="M23 7L16 12L23 17V7Z" fill="currentColor" /> <rect x="1" y="5" width="15" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+     </svg></button> <button class="header-icon-btn" onclick="showVoiceCall()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none"><path d="M22 16.92V19.92C22 20.4723 21.5523 20.92 21 20.92C9.40202 20.92 0 11.5181 0 -0.0799561C0 -0.632242 0.447715 -1.0799 1 -1.0799H4C4.55228 -1.0799 5 -0.632242 5 -0.0799561C5 1.36172 5.24585 2.78744 5.71677 4.13358C5.85951 4.54604 5.74863 5.00357 5.43304 5.31916L3.72023 7.03197C5.50025 10.4025 8.17748 13.0797 11.548 14.8598L13.2608 13.1469C13.5764 12.8314 14.034 12.7205 14.4464 12.8632C15.7926 13.3341 17.2183 13.58 18.658 13.58C19.2103 13.58 19.658 14.0277 19.658 14.58V17.58C19.658 18.1323 19.2103 18.58 18.658 18.58C18.6174 18.58 18.5768 18.5787 18.5364 18.5761" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+     </svg></button> <button class="header-icon-btn" onclick="toggleThemeMenu()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="1.5" fill="currentColor" /> <circle cx="12" cy="12" r="1.5" fill="currentColor" /> <circle cx="12" cy="19" r="1.5" fill="currentColor" />
+     </svg></button> <!-- Theme Menu -->
+    <div class="theme-menu" id="theme-menu">
+     <div style="padding: 8px 0;">
+      <div style="padding: 12px 16px; color: #8696A0; font-size: 13px; font-weight: 600;">
+       TEMA CHAT
+      </div><button class="theme-option" onclick="changeTheme('default')">
+       <div class="theme-preview" style="background: #0B141A;"></div><span>Dark (Default)</span> </button> <button class="theme-option" onclick="changeTheme('light')">
+       <div class="theme-preview" style="background: #EFEAE2;"></div><span>Light</span> </button> <button class="theme-option" onclick="changeTheme('blue')">
+       <div class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div><span>Blue Purple</span> </button> <button class="theme-option" onclick="changeTheme('sunset')">
+       <div class="theme-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div><span>Sunset</span> </button> <button class="theme-option" onclick="changeTheme('ocean')">
+       <div class="theme-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div><span>Ocean</span> </button> <button class="theme-option" onclick="changeTheme('forest')">
+       <div class="theme-preview" style="background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);"></div><span>Forest</span> </button>
+     </div>
+    </div>
+   </div><!-- Chat Container -->
+   <div class="chat-container" id="chat-container"><!-- Messages will be dynamically added here -->
+   </div><!-- Typing Indicator (Bottom, above input) -->
+   <div id="typing-indicator-wrapper" style="display: none; padding: 8px 16px; background: #EFEAE2;">
+    <div class="message received" style="margin-bottom: 0;">
+     <div class="message-bubble" style="background: #FFFFFF; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); padding: 8px 12px;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+       <div class="typing-dot"></div>
+       <div class="typing-dot"></div>
+       <div class="typing-dot"></div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Chat Input -->
+   <div class="chat-input-container"><button class="input-icon-btn" onclick="showEmojiPicker()">
+     <svg width="26" height="26" viewbox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#8696A0" stroke-width="1.5" /> <circle cx="9" cy="10" r="1.5" fill="#8696A0" /> <circle cx="15" cy="10" r="1.5" fill="#8696A0" /> <path d="M8 14C8 14 9.5 16 12 16C14.5 16 16 14 16 14" stroke="#8696A0" stroke-width="1.5" stroke-linecap="round" />
+     </svg></button> <input type="text" id="chat-input" placeholder="Tulis ucapan..." class="chat-input" onkeypress="if(event.key === 'Enter') sendMessage()"> <button class="input-icon-btn" onclick="showAttachMenu()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" stroke="#8696A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+     </svg></button> <button class="send-btn" id="send-btn" onclick="sendMessage()">
+     <svg width="24" height="24" viewbox="0 0 24 24" fill="none"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor" />
+     </svg></button>
+   </div><!-- Info Modal -->
+   <div class="modal-overlay" id="info-modal">
+    <div class="modal-content">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">Wedding Info</h3><button onclick="closeModal('info-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div>
+      <div style="text-align: center; margin-bottom: 20px;">
+       <div class="avatar" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto 12px;">
+        💑
+       </div>
+       <h2 style="font-size: 24px; font-weight: 700; color: #00A884;" id="info-couple">Nana &amp; Bowo</h2>
+       <p style="color: #667781; margin-top: 4px;" id="info-date">29 Maret 2026</p>
+      </div>
+      <div class="special-card">
+       <h4 style="font-weight: 600; margin-bottom: 12px; color: #00A884;">📍 Lokasi Acara</h4>
+       <p style="font-size: 14px; color: #111B21; margin-bottom: 8px;" id="info-venue">Joglo YOSO</p>
+       <p style="font-size: 13px; color: #667781;" id="info-address">Jl. Sultan Agung, Klodran, Palbapang, Bantul</p>
+      </div>
+      <div class="url-info-box">
+       <h4>🔗 Cara Membuat Link Personal</h4>
+       <p>💡 <strong>Mudah!</strong> Tinggal tambahkan <strong>?to=NamaTamu</strong> di akhir URL</p>
+       <p style="margin-top: 8px;">📋 <strong>Contoh link:</strong></p>
+       <p style="background: white; padding: 8px; border-radius: 4px; font-size: 12px; word-break: break-all; margin-top: 4px; border: 1px solid #81C784;"><span id="sample-url"></span></p>
+       <p style="margin-top: 8px;">✅ <strong>Untuk Budi:</strong> tambahkan <strong>?to=Budi</strong></p>
+       <p>✅ <strong>Untuk Sarah:</strong> tambahkan <strong>?to=Sarah</strong></p>
+       <p style="margin-top: 8px; font-style: italic; font-size: 12px;">Nama di parameter akan otomatis muncul di sapaan pembuka!</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Profile Modal -->
+   <div class="modal-overlay" id="profile-modal">
+    <div class="modal-content">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">Profil Mempelai</h3><button onclick="closeModal('profile-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div><!-- Bride Profile -->
+      <div class="special-card" style="margin-bottom: 16px;">
+       <div style="text-align: center; margin-bottom: 16px;">
+        <div class="avatar" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto 12px; background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);">
+         👰
+        </div>
+        <h3 style="font-size: 20px; font-weight: 700; color: #00A884; margin-bottom: 4px;">Noor Khasanah, S.Kep.Ners</h3>
+        <p style="font-size: 14px; color: #8696A0;">Nana</p>
+       </div>
+       <div style="background: #F0F2F5; border-radius: 8px; padding: 12px; font-size: 13px; color: #111B21;">
+        <p style="margin-bottom: 8px;"><strong>Putri ke-2 dari:</strong></p>
+        <p style="margin-bottom: 4px;">👨 Bapak Basuki</p>
+        <p style="margin-bottom: 8px;">👩 Ibu Pardilah</p>
+        <p style="font-size: 12px; color: #667781; font-style: italic;">📍 Sowangsan, Karangtalun, Imogiri, Bantul</p>
+       </div>
+      </div><!-- Groom Profile -->
+      <div class="special-card">
+       <div style="text-align: center; margin-bottom: 16px;">
+        <div class="avatar" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto 12px; background: linear-gradient(135deg, #87CEEB 0%, #4682B4 100%);">
+         🤵
+        </div>
+        <h3 style="font-size: 20px; font-weight: 700; color: #00A884; margin-bottom: 4px;">Kartika Eko Hari Wibowo, S.Tr.Kom</h3>
+        <p style="font-size: 14px; color: #667781;">Bowo</p>
+       </div>
+       <div style="background: #F0F2F5; border-radius: 8px; padding: 12px; font-size: 13px; color: #111B21;">
+        <p style="margin-bottom: 8px;"><strong>Putra ke-1 dari:</strong></p>
+        <p style="margin-bottom: 4px;">👨 Bapak Rusanta</p>
+        <p style="margin-bottom: 8px;">👩 Ibu Rusmiyati</p>
+        <p style="font-size: 12px; color: #667781; font-style: italic;">📍 Jati, Banaran, Galur, Kulonprogo</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- RSVP Form Modal -->
+   <div class="modal-overlay" id="rsvp-modal">
+    <div class="modal-content">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">Konfirmasi Kehadiran</h3><button onclick="closeModal('rsvp-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div>
+      <form onsubmit="submitRSVP(event)">
+       <div class="input-group"><label for="guest-name">Nama Lengkap</label> <input type="text" id="guest-name" required placeholder="Masukkan nama Anda">
+       </div>
+       <div class="input-group"><label>Status Kehadiran</label>
+        <div class="rsvp-options"><button type="button" class="rsvp-btn" onclick="selectAttendance('hadir', this)"> ✅ Hadir </button> <button type="button" class="rsvp-btn" onclick="selectAttendance('tidak-hadir', this)"> ❌ Tidak Bisa Hadir </button> <button type="button" class="rsvp-btn" onclick="selectAttendance('masih-ragu', this)"> 🤔 Masih Ragu </button>
+        </div>
+       </div>
+       <div class="input-group" id="guest-count-group" style="display: block;"><label for="guest-count">Jumlah Tamu</label> <input type="number" id="guest-count" min="0" max="10" value="1">
+       </div>
+       <div class="input-group"><label for="guest-message">Ucapan &amp; Doa</label> <textarea id="guest-message" rows="4" required placeholder="Tulis ucapan untuk mempelai..."></textarea>
+       </div><button type="submit" class="btn-whatsapp" id="submit-rsvp-btn"> 💌 Kirim Konfirmasi </button>
+      </form>
+     </div>
+    </div>
+   </div><!-- Wishes Modal -->
+   <div class="modal-overlay" id="wishes-modal">
+    <div class="modal-content">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">💝 Ucapan &amp; Doa</h3><button onclick="closeModal('wishes-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div>
+      <div id="wishes-container">
+       <div class="empty-state">
+        <p style="font-size: 40px; margin-bottom: 8px;">💬</p>
+        <p>Belum ada ucapan</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Gift Modal -->
+   <div class="modal-overlay" id="gift-modal">
+    <div class="modal-content">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">🎁 Wedding Gift</h3><button onclick="closeModal('gift-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div>
+      <p style="text-align: center; color: #667781; margin-bottom: 20px; font-size: 14px;">Doa restu Anda adalah karunia terindah. Namun jika ingin memberikan hadiah, Anda dapat mengirimkannya melalui:</p>
+      <div style="margin-bottom: 16px;">
+       <h4 style="font-weight: 600; margin-bottom: 12px; color: #00A884; font-size: 16px;">💳 Transfer Bank</h4>
+       <div class="bank-info">
+        <p style="font-size: 12px; color: #667781;">Bank BCA</p>
+        <p style="font-weight: 600; margin: 4px 0; color: #111B21;">1234567890</p>
+        <p style="font-size: 13px; color: #111B21;">a.n. Noor Khasanah</p><button class="copy-btn" onclick="copyAccount('1234567890', 'BCA')">📋 Salin</button>
+       </div>
+       <div class="bank-info">
+        <p style="font-size: 12px; color: #667781;">Bank Mandiri</p>
+        <p style="font-weight: 600; margin: 4px 0; color: #111B21;">0987654321</p>
+        <p style="font-size: 13px; color: #111B21;">a.n. Kartika Eko Hari Wibowo</p><button class="copy-btn" onclick="copyAccount('0987654321', 'Mandiri')">📋 Salin</button>
+       </div>
+      </div>
+      <div class="special-card">
+       <h4 style="font-weight: 600; margin-bottom: 12px; color: #00A884; font-size: 16px;">📦 Kirim Hadiah Fisik</h4>
+       <div style="background: #F0F2F5; border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+        <p style="font-size: 12px; color: #667781; margin-bottom: 4px;">Alamat Mempelai Putri:</p>
+        <p style="font-size: 13px; color: #111B21;">Sowangsan, Karangtalun, Imogiri, Bantul, DI Yogyakarta</p>
+       </div>
+       <div style="background: #F0F2F5; border-radius: 8px; padding: 12px;">
+        <p style="font-size: 12px; color: #667781; margin-bottom: 4px;">Alamat Mempelai Putra:</p>
+        <p style="font-size: 13px; color: #111B21;">Jati, Banaran, Galur, Kulonprogo, DI Yogyakarta</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Video Call Modal -->
+   <div class="modal-overlay" id="video-call-modal">
+    <div class="modal-content video-modal">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">📹 Video Call</h3><button onclick="closeModal('video-call-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div>
+      <div class="video-container" id="video-call-container">
+       <p style="text-align: center; color: #667781; padding: 40px;">Belum ada video yang di-set</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Voice Call Modal -->
+   <div class="modal-overlay" id="voice-call-modal">
+    <div class="modal-content video-modal">
+     <div style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+       <h3 style="font-size: 20px; font-weight: 700; color: #00A884;">📞 Voice Call</h3><button onclick="closeModal('voice-call-modal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8696A0;">×</button>
+      </div>
+      <div class="video-container" id="voice-call-container">
+       <p style="text-align: center; color: #667781; padding: 40px;">Belum ada video yang di-set</p>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      bride_name: 'Nana',
+      groom_name: 'Bowo',
+      wedding_date: '29 Maret 2026',
+      wedding_time: '08.00 WIB',
+      venue_name: 'Joglo YOSO',
+      venue_address: 'Jl. Sultan Agung, Klodran, Palbapang, Bantul, Bantul, DI Yogyakarta',
+      video_call_url: '',
+      voice_call_url: '',
+      background_color: '#EFEAE2',
+      surface_color: '#008069',
+      text_color: '#111B21',
+      primary_action_color: '#00A884',
+      secondary_action_color: '#008069'
+    };
+    
+    let config = { ...defaultConfig };
+    let wishesData = [];
+    let recordCount = 0;
+    let selectedAttendance = '';
+    let messagesShown = 0;
+    let countdownInterval = null;
+    let guestName = '';
+    
+    function getGuestNameFromURL() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('to')) {
+          const name = urlParams.get('to');
+          if (name && name.trim()) {
+            console.log('Guest name found:', name);
+            return name.trim();
+          }
+        }
+        
+        if (window.location.hash) {
+          const hashPart = window.location.hash.substring(1);
+          const hashParams = new URLSearchParams(hashPart);
+          if (hashParams.has('to')) {
+            const name = hashParams.get('to');
+            if (name && name.trim()) {
+              console.log('Guest name found in hash:', name);
+              return name.trim();
+            }
+          }
+        }
+        
+        console.log('No guest name found in URL');
+        return '';
+      } catch (e) {
+        console.error('Error parsing URL:', e);
+        return '';
+      }
+    }
+    
+
+    
+    function getMessages(guestName) {
+      const greeting = guestName ? `Assalamualaikum ${guestName}! 🙏` : 'Assalamualaikum! 🙏';
+      
+      return [
+        { type: 'received', text: greeting, delay: 500 },
+        { type: 'received', text: 'Kami ingin berbagi kabar bahagia! 💝', delay: 1500 },
+        { type: 'received', text: '👫', delay: 2000 },
+        { type: 'received', text: 'Kami akan menikah! 🎉', delay: 2500 },
+        { type: 'received', component: 'couple-card', delay: 3500 },
+        { type: 'received', text: 'Tanpa mengurangi rasa hormat, kami mengundang Bapak/Ibu/Saudara/i untuk hadir di acara pernikahan kami:', delay: 4500 },
+        { type: 'received', component: 'event-card', delay: 5500 },
+        { type: 'received', text: 'Countdown menuju hari bahagia kami:', delay: 6500 },
+        { type: 'received', component: 'countdown-card', delay: 7000 },
+        { type: 'received', text: 'Klik tombol di bawah untuk konfirmasi kehadiran ya! 👇', delay: 8000 },
+        { type: 'received', component: 'rsvp-button', delay: 8500 }
+      ];
+    }
+    
+    const dataHandler = {
+      onDataChanged(data) {
+        wishesData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        recordCount = data.length;
+        renderWishes();
+      }
+    };
+    
+    async function initApp() {
+      guestName = getGuestNameFromURL();
+      console.log('Initialized with guest name:', guestName);
+      
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...defaultConfig, ...newConfig };
+            updateUI();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              {
+                get: () => cfg.background_color || defaultConfig.background_color,
+                set: (value) => { cfg.background_color = value; window.elementSdk.setConfig({ background_color: value }); }
+              },
+              {
+                get: () => cfg.surface_color || defaultConfig.surface_color,
+                set: (value) => { cfg.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); }
+              },
+              {
+                get: () => cfg.text_color || defaultConfig.text_color,
+                set: (value) => { cfg.text_color = value; window.elementSdk.setConfig({ text_color: value }); }
+              },
+              {
+                get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => { cfg.primary_action_color = value; window.elementSdk.setConfig({ primary_action_color: value }); }
+              },
+              {
+                get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (value) => { cfg.secondary_action_color = value; window.elementSdk.setConfig({ secondary_action_color: value }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['bride_name', cfg.bride_name || defaultConfig.bride_name],
+            ['groom_name', cfg.groom_name || defaultConfig.groom_name],
+            ['wedding_date', cfg.wedding_date || defaultConfig.wedding_date],
+            ['wedding_time', cfg.wedding_time || defaultConfig.wedding_time],
+            ['venue_name', cfg.venue_name || defaultConfig.venue_name],
+            ['venue_address', cfg.venue_address || defaultConfig.venue_address],
+            ['video_call_url', cfg.video_call_url || defaultConfig.video_call_url],
+            ['voice_call_url', cfg.voice_call_url || defaultConfig.voice_call_url]
+          ])
+        });
+      }
+      
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize data');
+        }
+      }
+      
+      updateUI();
+      updateTime();
+      setInterval(updateTime, 1000);
+      startCountdown();
+      showMessages();
+    }
+    
+    function updateUI() {
+      const brideName = config.bride_name || defaultConfig.bride_name;
+      const groomName = config.groom_name || defaultConfig.groom_name;
+      const coupleNames = `${brideName} & ${groomName}`;
+      
+      document.getElementById('header-name').textContent = coupleNames;
+      document.getElementById('info-couple').textContent = coupleNames;
+      document.getElementById('info-date').textContent = config.wedding_date || defaultConfig.wedding_date;
+      document.getElementById('info-venue').textContent = config.venue_name || defaultConfig.venue_name;
+      document.getElementById('info-address').textContent = config.venue_address || defaultConfig.venue_address;
+      
+      const sampleUrl = window.location.origin + window.location.pathname + '?to=Budi';
+      document.getElementById('sample-url').textContent = sampleUrl;
+      
+      const bgColor = config.background_color || defaultConfig.background_color;
+      document.querySelector('.app-wrapper').style.background = bgColor;
+    }
+    
+    function updateTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+    }
+    
+    function startCountdown() {
+      const weddingDate = new Date('2026-03-29T08:00:00').getTime();
+      
+      countdownInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+        
+        if (distance < 0) {
+          clearInterval(countdownInterval);
+          updateCountdownDisplay(0, 0, 0, 0);
+          return;
+        }
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        updateCountdownDisplay(days, hours, minutes, seconds);
+      }, 1000);
+    }
+    
+    function updateCountdownDisplay(days, hours, minutes, seconds) {
+      const countdownEl = document.getElementById('countdown-display');
+      if (countdownEl) {
+        countdownEl.querySelector('#days').textContent = days;
+        countdownEl.querySelector('#hours').textContent = hours;
+        countdownEl.querySelector('#minutes').textContent = minutes;
+        countdownEl.querySelector('#seconds').textContent = seconds;
+      }
+    }
+    
+    function showMessages() {
+      const messages = getMessages(guestName);
+      
+      if (messagesShown >= messages.length) return;
+      
+      const message = messages[messagesShown];
+      const typingIndicator = document.getElementById('typing-indicator-wrapper');
+      const headerSubtitle = document.getElementById('header-subtitle');
+      
+      if (message.type === 'received') {
+        typingIndicator.style.display = 'block';
+        headerSubtitle.textContent = 'Sedang mengetik...';
+      }
+      
+      setTimeout(() => {
+        typingIndicator.style.display = 'none';
+        headerSubtitle.textContent = 'Wedding Invitation';
+        addMessage(message);
+        messagesShown++;
+        showMessages();
+      }, message.delay);
+    }
+    
+    function addMessage(message) {
+      const container = document.getElementById('chat-container');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${message.type}`;
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      
+      if (message.component) {
+        bubble.innerHTML = getComponentHTML(message.component);
+      } else if (message.emoji) {
+        bubble.style.fontSize = '48px';
+        bubble.style.background = 'transparent';
+        bubble.style.boxShadow = 'none';
+        bubble.textContent = message.emoji;
+      } else {
+        bubble.innerHTML = `
+          ${escapeHtml(message.text)}
+          <div class="message-time">${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</div>
+        `;
+      }
+      
+      messageDiv.appendChild(bubble);
+      container.appendChild(messageDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    function getComponentHTML(componentName) {
+      const brideName = config.bride_name || defaultConfig.bride_name;
+      const groomName = config.groom_name || defaultConfig.groom_name;
+      const weddingDate = config.wedding_date || defaultConfig.wedding_date;
+      const weddingTime = config.wedding_time || defaultConfig.wedding_time;
+      const venueName = config.venue_name || defaultConfig.venue_name;
+      const venueAddress = config.venue_address || defaultConfig.venue_address;
+      
+      switch(componentName) {
+        case 'couple-card':
+          return `
+            <div class="special-card">
+              <div style="text-align: center;">
+                <div style="font-size: 36px; margin-bottom: 8px;">👰🤵</div>
+                <div style="font-size: 20px; font-weight: 700; color: #00A884; margin-bottom: 4px;">
+                  ${brideName} & ${groomName}
+                </div>
+                <div style="font-size: 14px; color: #8696A0;">
+                  ${weddingDate}
+                </div>
+              </div>
+            </div>
+          `;
+        
+        case 'event-card':
+          return `
+            <div class="special-card">
+              <div style="margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #8696A0; margin-bottom: 4px;">📅 Tanggal & Waktu</div>
+                <div style="font-weight: 600; color: #00A884;">${weddingDate}</div>
+                <div style="font-size: 14px; color: #111B21;">${weddingTime}</div>
+              </div>
+              <div class="location-card">
+                <div style="font-size: 14px; color: #8696A0; margin-bottom: 4px;">📍 Lokasi</div>
+                <div style="font-weight: 600; color: #00A884; margin-bottom: 4px;">${venueName}</div>
+                <div style="font-size: 13px; color: #111B21; margin-bottom: 8px;">${venueAddress}</div>
+                <a href="https://maps.app.goo.gl/EYeMgqbRfZyX16FA6" target="_blank" rel="noopener noreferrer" class="btn-map">
+                  🗺️ Buka Maps
+                </a>
+              </div>
+            </div>
+          `;
+        
+        case 'countdown-card':
+          return `
+            <div class="special-card">
+              <div class="countdown-container" id="countdown-display">
+                <div class="countdown-box">
+                  <span class="countdown-number" id="days">0</span>
+                  <span class="countdown-label">Hari</span>
+                </div>
+                <div class="countdown-box">
+                  <span class="countdown-number" id="hours">0</span>
+                  <span class="countdown-label">Jam</span>
+                </div>
+                <div class="countdown-box">
+                  <span class="countdown-number" id="minutes">0</span>
+                  <span class="countdown-label">Menit</span>
+                </div>
+                <div class="countdown-box">
+                  <span class="countdown-number" id="seconds">0</span>
+                  <span class="countdown-label">Detik</span>
+                </div>
+              </div>
+            </div>
+          `;
+        
+        case 'rsvp-button':
+          return `
+            <button class="btn-whatsapp" onclick="openRSVP()">
+              ✅ Konfirmasi Kehadiran
+            </button>
+          `;
+        
+        case 'wishes-button':
+          return `
+            <button class="btn-whatsapp" onclick="showWishes()">
+              💝 Lihat Ucapan Tamu
+            </button>
+          `;
+        
+        case 'gift-button':
+          return `
+            <button class="btn-whatsapp" onclick="showGiftModal()">
+              🎁 Kirim Hadiah
+            </button>
+          `;
+        
+        default:
+          return '';
+      }
+    }
+    
+    function convertToEmbedUrl(url) {
+      if (!url) return '';
+      
+      const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/;
+      const youtubeMatch = url.match(youtubeRegex);
+      if (youtubeMatch) {
+        return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+      }
+      
+      const driveRegex = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
+      const driveMatch = url.match(driveRegex);
+      if (driveMatch) {
+        return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+      }
+      
+      return url;
+    }
+    
+    function showVideoCall() {
+      const videoUrl = config.video_call_url || defaultConfig.video_call_url;
+      const container = document.getElementById('video-call-container');
+      
+      if (!videoUrl) {
+        container.innerHTML = '<p style="text-align: center; color: #667781; padding: 40px;">Video belum di-set. Silakan tambahkan URL video di panel edit.</p>';
+      } else {
+        const embedUrl = convertToEmbedUrl(videoUrl);
+        container.innerHTML = `<iframe src="${embedUrl}" allow="autoplay"></iframe>`;
+      }
+      
+      document.getElementById('video-call-modal').classList.add('active');
+    }
+    
+    function showVoiceCall() {
+      const videoUrl = config.voice_call_url || defaultConfig.voice_call_url;
+      const container = document.getElementById('voice-call-container');
+      
+      if (!videoUrl) {
+        container.innerHTML = '<p style="text-align: center; color: #667781; padding: 40px;">Video belum di-set. Silakan tambahkan URL video di panel edit.</p>';
+      } else {
+        const embedUrl = convertToEmbedUrl(videoUrl);
+        container.innerHTML = `<iframe src="${embedUrl}" allow="autoplay"></iframe>`;
+      }
+      
+      document.getElementById('voice-call-modal').classList.add('active');
+    }
+    
+    function toggleThemeMenu() {
+      const menu = document.getElementById('theme-menu');
+      menu.classList.toggle('active');
+    }
+    
+    function changeTheme(themeName) {
+      const chatContainer = document.getElementById('chat-container');
+      const typingIndicatorWrapper = document.getElementById('typing-indicator-wrapper');
+      const appWrapper = document.querySelector('.app-wrapper');
+      const statusBar = document.querySelector('.status-bar');
+      const header = document.querySelector('.whatsapp-header');
+      const inputContainer = document.querySelector('.chat-input-container');
+      const chatInput = document.querySelector('.chat-input');
+      
+      const themes = {
+        'default': {
+          chat: '#EFEAE2',
+          appBg: '#F0F2F5',
+          header: '#008069',
+          headerText: '#FFFFFF',
+          statusBar: '#008069',
+          statusBarText: '#FFFFFF',
+          inputContainer: '#F0F2F5',
+          inputBg: '#FFFFFF',
+          inputColor: '#3B3B3B',
+          typingWrapperBg: '#EFEAE2',
+          buttonColor: '#00A884',
+          secondaryButton: '#008069',
+          countdownBox: '#008069',
+          receivedBubble: '#FFFFFF',
+          receivedText: '#111B21',
+          sentBubble: '#D9FDD3',
+          sentText: '#111B21'
+        },
+        'light': {
+          chat: '#EFEAE2',
+          appBg: '#F0F2F5',
+          header: '#008069',
+          headerText: '#FFFFFF',
+          statusBar: '#007A5C',
+          statusBarText: '#FFFFFF',
+          inputContainer: '#F0F2F5',
+          inputBg: '#FFFFFF',
+          inputColor: '#3B3B3B',
+          typingWrapperBg: '#EFEAE2',
+          buttonColor: '#00A884',
+          secondaryButton: '#008069',
+          countdownBox: '#008069',
+          receivedBubble: '#FFFFFF',
+          receivedText: '#111B21',
+          sentBubble: '#D9FDD3',
+          sentText: '#111B21'
+        },
+        'blue': {
+          chat: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          appBg: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
+          header: '#5568d3',
+          headerText: '#FFFFFF',
+          statusBar: '#667eea',
+          statusBarText: '#FFFFFF',
+          inputContainer: '#5568d3',
+          inputBg: 'rgba(255,255,255,0.2)',
+          inputColor: '#FFFFFF',
+          typingWrapperBg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          buttonColor: '#667eea',
+          secondaryButton: '#5568d3',
+          countdownBox: '#5568d3',
+          receivedBubble: 'rgba(255,255,255,0.95)',
+          receivedText: '#111B21',
+          sentBubble: 'rgba(102,126,234,0.9)',
+          sentText: '#FFFFFF'
+        },
+        'sunset': {
+          chat: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+          appBg: 'linear-gradient(180deg, #f093fb 0%, #f5576c 100%)',
+          header: '#e67bb8',
+          headerText: '#FFFFFF',
+          statusBar: '#f093fb',
+          statusBarText: '#FFFFFF',
+          inputContainer: '#e67bb8',
+          inputBg: 'rgba(255,255,255,0.2)',
+          inputColor: '#FFFFFF',
+          typingWrapperBg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+          buttonColor: '#f093fb',
+          secondaryButton: '#e67bb8',
+          countdownBox: '#e67bb8',
+          receivedBubble: 'rgba(255,255,255,0.95)',
+          receivedText: '#111B21',
+          sentBubble: 'rgba(240,147,251,0.9)',
+          sentText: '#FFFFFF'
+        },
+        'ocean': {
+          chat: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+          appBg: 'linear-gradient(180deg, #4facfe 0%, #00f2fe 100%)',
+          header: '#3d9de6',
+          headerText: '#FFFFFF',
+          statusBar: '#4facfe',
+          statusBarText: '#FFFFFF',
+          inputContainer: '#3d9de6',
+          inputBg: 'rgba(255,255,255,0.2)',
+          inputColor: '#FFFFFF',
+          typingWrapperBg: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+          buttonColor: '#4facfe',
+          secondaryButton: '#3d9de6',
+          countdownBox: '#3d9de6',
+          receivedBubble: 'rgba(255,255,255,0.95)',
+          receivedText: '#111B21',
+          sentBubble: 'rgba(79,172,254,0.9)',
+          sentText: '#FFFFFF'
+        },
+        'forest': {
+          chat: 'linear-gradient(135deg, #0ba360 0%, #3cba92 100%)',
+          appBg: 'linear-gradient(180deg, #0ba360 0%, #3cba92 100%)',
+          header: '#098a50',
+          headerText: '#FFFFFF',
+          statusBar: '#0ba360',
+          statusBarText: '#FFFFFF',
+          inputContainer: '#098a50',
+          inputBg: 'rgba(255,255,255,0.2)',
+          inputColor: '#FFFFFF',
+          typingWrapperBg: 'linear-gradient(135deg, #0ba360 0%, #3cba92 100%)',
+          buttonColor: '#0ba360',
+          secondaryButton: '#098a50',
+          countdownBox: '#098a50',
+          receivedBubble: 'rgba(255,255,255,0.95)',
+          receivedText: '#111B21',
+          sentBubble: 'rgba(11,163,96,0.9)',
+          sentText: '#FFFFFF'
+        }
+      };
+      
+      const theme = themes[themeName];
+      chatContainer.style.background = theme.chat;
+      typingIndicatorWrapper.style.background = theme.typingWrapperBg;
+      appWrapper.style.background = theme.appBg;
+      header.style.background = theme.header;
+      header.style.color = theme.headerText;
+      statusBar.style.background = theme.statusBar;
+      statusBar.style.color = theme.statusBarText;
+      inputContainer.style.background = theme.inputContainer;
+      chatInput.style.background = theme.inputBg;
+      chatInput.style.color = theme.inputColor;
+      
+      document.querySelectorAll('.message.received .message-bubble').forEach(bubble => {
+        if (!bubble.querySelector('.special-card') && bubble.textContent.length < 10) {
+        } else {
+          bubble.style.background = theme.receivedBubble;
+          bubble.style.color = theme.receivedText;
+        }
+      });
+      
+      document.querySelectorAll('.message.sent .message-bubble').forEach(bubble => {
+        bubble.style.background = theme.sentBubble;
+        bubble.style.color = theme.sentText;
+      });
+      
+      document.querySelectorAll('.message-time').forEach(time => {
+        if (themeName === 'default' || themeName === 'light') {
+          time.style.color = 'rgba(0,0,0,0.45)';
+        } else {
+          time.style.color = 'rgba(255,255,255,0.7)';
+        }
+      });
+      
+      document.querySelectorAll('.btn-whatsapp').forEach(btn => {
+        btn.style.background = theme.buttonColor;
+      });
+      
+      document.querySelectorAll('.btn-map').forEach(btn => {
+        btn.style.background = theme.secondaryButton;
+      });
+      
+      document.querySelectorAll('.countdown-box').forEach(box => {
+        box.style.background = theme.countdownBox;
+      });
+      
+      const sendBtn = document.querySelector('.send-btn');
+      if (sendBtn) {
+        sendBtn.style.background = theme.buttonColor;
+      }
+      
+      toggleThemeMenu();
+      showToast('🎨 Tema berhasil diubah!');
+    }
+    
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      if (recordCount >= 999) {
+        showToast('⚠️ Batas maksimum ucapan telah tercapai!');
+        return;
+      }
+      
+      const sendBtn = document.getElementById('send-btn');
+      sendBtn.disabled = true;
+      
+      addMessage({
+        type: 'sent',
+        text: message
+      });
+      
+      input.value = '';
+      
+      if (window.dataSdk) {
+        const senderName = guestName || 'Tamu';
+        
+        const result = await window.dataSdk.create({
+          id: Date.now().toString(),
+          guest_name: senderName,
+          message: message,
+          attendance: 'ucapan',
+          guest_count: 0,
+          createdAt: new Date().toISOString()
+        });
+        
+        if (!result.isOk) {
+          showToast('❌ Gagal mengirim ucapan');
+        }
+      }
+      
+      setTimeout(() => {
+        const typingIndicator = document.getElementById('typing-indicator-wrapper');
+        const headerSubtitle = document.getElementById('header-subtitle');
+        typingIndicator.style.display = 'block';
+        headerSubtitle.textContent = 'Sedang mengetik...';
+      }, 500);
+      
+      setTimeout(() => {
+        const typingIndicator = document.getElementById('typing-indicator-wrapper');
+        const headerSubtitle = document.getElementById('header-subtitle');
+        typingIndicator.style.display = 'none';
+        headerSubtitle.textContent = 'Wedding Invitation';
+        
+        addMessage({
+          type: 'received',
+          text: 'Terima kasih atas ucapan dan doanya! 🙏💕 Semoga berkah selalu menyertai kita semua.'
+        });
+      }, 2500);
+      
+      sendBtn.disabled = false;
+    }
+    
+    function showEmojiPicker() {
+      const emojis = ['😊', '😍', '🥰', '😘', '🤗', '😄', '😁', '💕', '❤️', '💖', '💗', '💓', '💝', '💘', '💞', '🌸', '🌹', '💐', '🎉', '✨'];
+      const input = document.getElementById('chat-input');
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      input.value += randomEmoji;
+      input.focus();
+    }
+    
+    function showAttachMenu() {
+      showToast('📎 Fitur attach sedang dalam pengembangan');
+    }
+    
+    function openRSVP() {
+      if (guestName) {
+        document.getElementById('guest-name').value = guestName;
+      }
+      document.getElementById('rsvp-modal').classList.add('active');
+    }
+    
+    function showWishes() {
+      renderWishes();
+      document.getElementById('wishes-modal').classList.add('active');
+    }
+    
+    function showInfo() {
+      document.getElementById('info-modal').classList.add('active');
+    }
+    
+    function showProfileModal() {
+      document.getElementById('profile-modal').classList.add('active');
+    }
+    
+    function showGiftModal() {
+      document.getElementById('gift-modal').classList.add('active');
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+      
+      if (modalId === 'video-call-modal') {
+        document.getElementById('video-call-container').innerHTML = '<p style="text-align: center; color: #667781; padding: 40px;">Belum ada video yang di-set</p>';
+      }
+      if (modalId === 'voice-call-modal') {
+        document.getElementById('voice-call-container').innerHTML = '<p style="text-align: center; color: #667781; padding: 40px;">Belum ada video yang di-set</p>';
+      }
+    }
+    
+    function selectAttendance(status, button) {
+      selectedAttendance = status;
+      document.querySelectorAll('.rsvp-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      button.classList.add('selected');
+      
+      const guestCountGroup = document.getElementById('guest-count-group');
+      const guestCountInput = document.getElementById('guest-count');
+      
+      if (status === 'tidak-hadir') {
+        guestCountGroup.style.display = 'none';
+        guestCountInput.value = '0';
+      } else {
+        guestCountGroup.style.display = 'block';
+        if (guestCountInput.value === '0') {
+          guestCountInput.value = '1';
+        }
+      }
+    }
+    
+    async function submitRSVP(event) {
+      event.preventDefault();
+      
+      if (!selectedAttendance) {
+        showToast('⚠️ Pilih status kehadiran terlebih dahulu');
+        return;
+      }
+      
+      if (recordCount >= 999) {
+        showToast('⚠️ Batas maksimum ucapan telah tercapai!');
+        return;
+      }
+      
+      const submitBtn = document.getElementById('submit-rsvp-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Mengirim...';
+      
+      const name = document.getElementById('guest-name').value.trim();
+      const count = selectedAttendance === 'tidak-hadir' ? 0 : parseInt(document.getElementById('guest-count').value);
+      const message = document.getElementById('guest-message').value.trim();
+      
+      if (window.dataSdk) {
+        const result = await window.dataSdk.create({
+          id: Date.now().toString(),
+          guest_name: name,
+          message: message,
+          attendance: selectedAttendance,
+          guest_count: count,
+          createdAt: new Date().toISOString()
+        });
+        
+        if (result.isOk) {
+          closeModal('rsvp-modal');
+          
+          setTimeout(() => {
+            addMessage({
+              type: 'sent',
+              text: message
+            });
+          }, 300);
+          
+          setTimeout(() => {
+            const typingIndicator = document.getElementById('typing-indicator-wrapper');
+            const headerSubtitle = document.getElementById('header-subtitle');
+            typingIndicator.style.display = 'block';
+            headerSubtitle.textContent = 'Sedang mengetik...';
+          }, 1000);
+          
+          setTimeout(() => {
+            const typingIndicator = document.getElementById('typing-indicator-wrapper');
+            const headerSubtitle = document.getElementById('header-subtitle');
+            typingIndicator.style.display = 'none';
+            headerSubtitle.textContent = 'Wedding Invitation';
+            
+            let responseText = '';
+            
+            if (selectedAttendance === 'hadir') {
+              responseText = `Alhamdulillah, terima kasih ${name}! 🥰 Kami sangat senang Anda bisa hadir. Sampai jumpa di hari bahagia kami ya! 💝`;
+            } else if (selectedAttendance === 'tidak-hadir') {
+              responseText = `Terima kasih atas doanya ${name} 🙏 Tidak apa-apa, yang terpenting doa restunya untuk kami. Semoga kita bisa bertemu di lain waktu! 💕`;
+            } else {
+              responseText = `Oke ${name}, tidak masalah! 😊 Kabar-kabari kami ya kalau sudah pasti. Ditunggu kehadirannya! 💝`;
+            }
+            
+            addMessage({
+              type: 'received',
+              text: responseText
+            });
+            
+            setTimeout(() => {
+              addMessage({
+                type: 'received',
+                component: 'wishes-button'
+              });
+            }, 1000);
+            
+            setTimeout(() => {
+              addMessage({
+                type: 'received',
+                component: 'gift-button'
+              });
+            }, 1500);
+          }, 3000);
+          
+          document.getElementById('guest-name').value = '';
+          document.getElementById('guest-count').value = '1';
+          document.getElementById('guest-message').value = '';
+          selectedAttendance = '';
+          document.querySelectorAll('.rsvp-btn').forEach(btn => {
+            btn.classList.remove('selected');
+          });
+        } else {
+          showToast('❌ Gagal mengirim. Silakan coba lagi.');
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = '💌 Kirim Konfirmasi';
+      }
+    }
+    
+    function renderWishes() {
+      const container = document.getElementById('wishes-container');
+      
+      if (wishesData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p style="font-size: 40px; margin-bottom: 8px;">💬</p>
+            <p>Belum ada ucapan</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const attendanceEmoji = {
+        'hadir': '✅',
+        'tidak-hadir': '❌',
+        'masih-ragu': '🤔',
+        'ucapan': '💬'
+      };
+      
+      container.innerHTML = wishesData.map(wish => {
+        const date = new Date(wish.createdAt);
+        const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const emoji = attendanceEmoji[wish.attendance] || '💝';
+        
+        return `
+          <div class="wish-bubble">
+            <div class="wish-header">
+              <span class="wish-name">${escapeHtml(wish.guest_name)}</span>
+              <span class="wish-badge">${emoji}</span>
+            </div>
+            <div class="wish-text">${escapeHtml(wish.message)}</div>
+            <div class="wish-date">${dateStr}${wish.guest_count > 0 ? ` • ${wish.guest_count} orang` : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function copyToClipboard(text) {
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      
+      showToast('📋 Link disalin ke clipboard!');
+    }
+    
+    function copyAccount(number, bankName) {
+      const tempInput = document.createElement('input');
+      tempInput.value = number;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      
+      showToast(`📋 Nomor rekening ${bankName} disalin!`);
+    }
+    
+    function showToast(message) {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) existingToast.remove();
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    document.addEventListener('click', (e) => {
+      const themeMenu = document.getElementById('theme-menu');
+      const menuButton = e.target.closest('button.header-icon-btn');
+      
+      if (themeMenu && !themeMenu.contains(e.target) && !menuButton) {
+        themeMenu.classList.remove('active');
+      }
+    });
+    
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c14e72602819cf4',t:'MTc2ODk3ODQ5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
